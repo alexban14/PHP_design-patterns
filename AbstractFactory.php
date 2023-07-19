@@ -58,4 +58,58 @@ class PHPTemplateFactory implements TemplateFactory
     }
 }
 
+/**
+ * Each distinct product type should have a separate interface. All variants of
+ * the product must follow the same interface.
+ */
+interface TitleTemplate
+{
+	public function getTemplateString(): string;
+}
 
+/**
+ * This Concrete Product provides Twig page title templates
+ */
+class TwigTitleTemplate implements TitleTemplate
+{
+	public function getTemplateString(): string
+	{
+		return "<h1>{{ title }}</h1>";
+	}
+
+}
+
+
+/**
+ * This Concrete Product provides PHPTemplate page title templates
+ */
+class PHPTemplateTitleTemplate implements TitleTemplate
+{
+	public function getTemplateString(): string
+	{
+		return "<h1><? \$title; ?><h1>";
+	}
+}
+
+/**
+ * This is another Abstract Product type, which describes whole page templates.
+ */
+interface PageTemplate
+{
+	public function getTemplateString(): string;
+}
+
+/**
+ * The page template uses the title sub-template, so we have to provide the way
+ * to set it in the sub-template object. The abstract factory will link the page
+ * template with a title template of the same variant.
+ */
+abstract class BasePageTemplate implements PageTemplate
+{
+	protected $titleTemplate;
+
+	public function __construct(TitleTemplate $titleTemplate)
+	{
+		$this->titleTemplate = $titleTemplate;
+	}
+}
